@@ -1,0 +1,38 @@
+[
+  {
+
+    "checkInTime": "2024-04-09T12:29:20.584451",
+    "checkOutTime": "2024-04-11T12:29:20.584451",
+    "totalPrice": 45.34,
+    "userName": "do",
+    "firstName": "nhung",
+    "lastName": "nhung",
+    "dob": 324324,
+    "sex": "female",
+    "phone": "+9234324",
+    "email": "thidonhung@gmail.com",
+    "address": "vietnam",
+    "numChildren": 1,
+    "numAdults": 1,
+    "note": "",
+    "numReservedRooms": 8
+  },
+  {
+    "checkInTime": "2024-04-15T12:29:20.584451",
+    "checkOutTime": "2024-04-16T12:29:20.584451",
+    "totalPrice": 45.34,
+    "userName": "do",
+    "firstName": "nhung",
+    "lastName": "nhung",
+    "dob": 324324,
+    "sex": "female",
+    "phone": "+9234324",
+    "email": "thidonhung@gmail.com",
+    "address": "vietnam",
+    "numChildren": 1,
+    "numAdults": 1,
+    "note": "",
+    "numReservedRooms": 8
+
+  }
+]

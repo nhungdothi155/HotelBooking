@@ -1,0 +1,5 @@
+FROM openjdk:17-jdk-slim
+EXPOSE 8080
+ARG JAR_FILE=./target/HotelBooking-0.0.1-SNAPSHOT.jar
+COPY ${JAR_FILE} HotelBooking-0.0.1-SNAPSHOT.jar
+CMD [ "java", "-jar",  "/HotelBooking-0.0.1-SNAPSHOT.jar","--spring.profiles.active=dev"]

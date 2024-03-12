@@ -1,0 +1,91 @@
+version: '3'
+services:
+  mysql:
+    platform: linux/arm64/v8
+    image: mysql:latest
+    container_name: mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "db_booking_hotel"
+#      MYSQL_USER: "root"
+#      MYSQL_PASSWORD: "root"
+    volumes:
+      - ./data/:/docker-entrypoint-initdb.d/
+  elasticsearch:
+    platform: linux/arm64/v8
+    image: elasticsearch:7.17.4
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+        nofile:
+            soft: 65536
+            hard: 65536
+    volumes:
+      - ./volumes/elasticsearch:/usr/lib/elasticsearch/data1
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "10k"
+            max-file: "10"
+  logstash:
+    platform: linux/arm64/v8
+    build:
+      context: .
+      dockerfile: Dockerfile-logstash
+    container_name: logstash
+    # restart: on-failure
+    depends_on:
+      - mysql
+      - elasticsearch
+    volumes:
+      - ./volumes/logstash/pipeline/:/usr/share/logstash/pipeline/
+      - ./volumes/logstash/config/pipelines.yml:/usr/share//logstash/config/pipelines.yml
+      - ./volumes/logstash/config/logstash.yml:/usr/share//logstash/config/logstash.yml
+      - ./volumes/logstash/templates/:/usr/share/logstash/templates/
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10k"
+        max-file: "10"
+
+
+  kibana:
+    image: kibana:7.17.4
+    container_name: kibana
+    environment:
+      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
+      - "SERVER_NAME=127.0.0.1"
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+
+
+#  hotel_booking:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile-application
+#     container_name: hotel_booking
+#     restart: on-failure
+#     environment:
+#       - "MYSQL_URL=jdbc:mysql://mysql:3306/db_hotel_booking"
+#       - "ELASTICSEARCH_URL=elasticsearch:9200"
+#       - "AMQ_ADMIN_USER=admin"
+#       - "AMQ_ADMIN_PASSWORD=admin"
+#       - "AMQ_URL=tcp://activemq:61616"
+#     ports:
+#       - "8080:8080"
+#     links:
+#       - elasticsearch:elasticsearch
+#
+#     depends_on:
+#       - mysql
+#       - elasticsearch
+#       - logstash
