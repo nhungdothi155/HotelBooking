@@ -35,5 +35,6 @@ public class LoggingFilter implements Filter {
         //headers
         //payload
         //
+        chain.doFilter(httpRequest, httpResponse);
     }
 }
