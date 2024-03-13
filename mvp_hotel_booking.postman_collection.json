@@ -1,0 +1,87 @@
+{
+	"info": {
+		"_postman_id": "937ba5bc-1a44-4a59-bcc2-8a5a5fedc990",
+		"name": "MVP Hotel Booking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "21603306"
+	},
+	"item": [
+		{
+			"name": "Search for hotel",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bookingId\":10,\n    \"checkInTime\": \"2024-04-15T12:29:20.584451\",\n    \"checkOutTime\": \"2024-04-16T12:29:20.584451\",\n    \"totalPrice\": 45.34,\n    \"userName\": \"do\",\n    \"firstName\": \"nhung\",\n    \"lastName\": \"nhung\",\n    \"dob\": 324324,\n    \"sex\": \"female\",\n    \"phone\": \"+9234324\",\n    \"email\": \"thidonhung@gmail.com\",\n    \"address\": \"vietnam\",\n    \"numChildren\": 1,\n    \"numAdults\": 1,\n    \"note\": \"\",\n    \"numOfBookingRoom\": 8\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/v1/hotel"
+			},
+			"response": []
+		},
+		{
+			"name": "insert a booking",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\n    \"checkInTime\": \"2024-05-15T12:29:20.584451\",\n    \"checkOutTime\": \"2024-05-16T12:29:20.584451\",\n    \"totalPrice\": 45.34,\n    \"userName\": \"do\",\n    \"firstName\": \"nhung\",\n    \"lastName\": \"nhung\",\n    \"dob\": 324324,\n    \"sex\": \"female\",\n    \"phone\": \"+9234324\",\n    \"email\": \"thidonhung@gmail.com\",\n    \"address\": \"vietnam\",\n    \"numChildren\": 1,\n    \"numAdults\": 1,\n    \"note\": \"\",\n    \"numOfBookingRoom\": 8\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/v1/booking?hotelId=639&roomId=1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"booking"
+					],
+					"query": [
+						{
+							"key": "hotelId",
+							"value": "639"
+						},
+						{
+							"key": "roomId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get booking by id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/v1/booking/1"
+			},
+			"response": []
+		}
+	]
+}
