@@ -23,6 +23,7 @@ Create a new Hotel Booking integration for a new API partner who serves 3 millio
 * If using RDBMS, it would be nice to have a script to generate additional test data Application should be instrumented: Custom metrics, logging, tracing, and monitoring
 * To start the application, database, and so on, a docker-compose.yml file would be useful
 
+![image](https://github.com/nhungdothi155/HotelBooking/assets/77849669/b3d84c9b-adb1-4369-b9d6-b36e3fc298b2)
 
 ## Technologies
 * Java 11
