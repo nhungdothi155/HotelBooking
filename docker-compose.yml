@@ -1,4 +1,4 @@
-version: '3'
+version: '4.0'
 services:
   mysql:
     platform: linux/arm64/v8
@@ -9,10 +9,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "root"
       MYSQL_DATABASE: "db_booking_hotel"
-#      MYSQL_USER: "root"
-#      MYSQL_PASSWORD: "root"
+      MYSQL_USER: "rose"
+      MYSQL_PASSWORD: "rose"
     volumes:
-      - ./data/:/docker-entrypoint-initdb.d/
+      - ./data:/docker-entrypoint-initdb.d/
   elasticsearch:
     platform: linux/arm64/v8
     image: elasticsearch:7.17.4
@@ -28,64 +28,102 @@ services:
             soft: 65536
             hard: 65536
     volumes:
-      - ./volumes/elasticsearch:/usr/lib/elasticsearch/data1
+      - ./volumes/elasticsearch:/usr/share/elasticsearch/data
     logging:
         driver: "json-file"
         options:
             max-size: "10k"
             max-file: "10"
-  logstash:
-    platform: linux/arm64/v8
-    build:
-      context: .
-      dockerfile: Dockerfile-logstash
-    container_name: logstash
-    # restart: on-failure
-    depends_on:
-      - mysql
-      - elasticsearch
+
+  hotel-booking:
+     build:
+       context: .
+       dockerfile: Dockerfile-application
+     image: hotel-booking
+     container_name: hotel-booking
+     restart: on-failure
+     environment:
+       - "MYSQL_URL=jdbc:mysql://mysql:3306/db_booking_hotel"
+       - "MYSQL_USER=rose"
+       - "MYSQL_PASSWORD=rose"
+       - "ELASTICSEARCH_URL=elasticsearch:9200"
+     ports:
+       - "8080:8080"
+     links:
+       - elasticsearch:elasticsearch
+
+     depends_on:
+       - mysql
+       - elasticsearch
+  loki:
+    image: grafana/loki:main
+    command: [ "-config.file=/etc/loki/loki-config.yml" ]
     volumes:
-      - ./volumes/logstash/pipeline/:/usr/share/logstash/pipeline/
-      - ./volumes/logstash/config/pipelines.yml:/usr/share//logstash/config/pipelines.yml
-      - ./volumes/logstash/config/logstash.yml:/usr/share//logstash/config/logstash.yml
-      - ./volumes/logstash/templates/:/usr/share/logstash/templates/
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10k"
-        max-file: "10"
-
-
-  kibana:
-    image: kibana:7.17.4
-    container_name: kibana
-    environment:
-      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
-      - "SERVER_NAME=127.0.0.1"
+      - ./volumes/loki/loki-config.yml:/etc/loki/loki-config.yml
     ports:
-      - 5601:5601
+      - "3100:3100"
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./volumes/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
     depends_on:
-      - elasticsearch
+      - hotel-booking
 
 
-#  hotel_booking:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile-application
-#     container_name: hotel_booking
-#     restart: on-failure
-#     environment:
-#       - "MYSQL_URL=jdbc:mysql://mysql:3306/db_hotel_booking"
-#       - "ELASTICSEARCH_URL=elasticsearch:9200"
-#       - "AMQ_ADMIN_USER=admin"
-#       - "AMQ_ADMIN_PASSWORD=admin"
-#       - "AMQ_URL=tcp://activemq:61616"
-#     ports:
-#       - "8080:8080"
-#     links:
-#       - elasticsearch:elasticsearch
-#
-#     depends_on:
-#       - mysql
-#       - elasticsearch
-#       - logstash
+  grafana:
+    image: grafana/grafana:9.3.6
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./volumes/grafana/grafana-data:/var/lib/grafana
+      - ./volumes/grafana/provisioning/datasources/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+    environment:
+      - "GF_SECURITY_ADMIN_USER=admin"
+      - "GF_SECURITY_ADMIN_USER=admin"
+  tempo:
+    image: grafana/tempo:latest
+    command: [ "-config.file=/etc/tempo.yml" ]
+    volumes:
+      - ./volumes/tempo/tempo.yml:/etc/tempo.yml
+    ports:
+      - "3200:3200"   # tempo
+      - "4317"  # otlp grpc
+
+
+  jaeger-service:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+      - "14250"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+
+  promtail:
+    image: grafana/promtail
+    container_name: promtail
+    volumes:
+      - ./volumes/promtail/promtail.yml:/etc/promtail/docker-config.yml
+      - ./volumes/promtail/var/log:/var/log/
+    command: "--config.file=/etc/promtail/docker-config.yml"
+
+  collector:
+    image: otel/opentelemetry-collector-contrib:0.82.0
+    command: [ "--config=/etc/otel-collector-config.yml" ]
+    volumes:
+      - ./volumes/otel/otel-config.yml:/etc/otel-collector-config.yml
+    ports:
+      - "1888:1888" # pprof extension
+      - "8888:8888" # Prometheus metrics exposed by the collector
+      - "8889:8889" # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP http receiver
+      - "55679:55679" # zpages extension
+    depends_on:
+      - jaeger-service
+

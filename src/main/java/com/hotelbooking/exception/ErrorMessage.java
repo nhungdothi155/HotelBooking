@@ -1,4 +1,4 @@
-package com.hotelbooking.configuration.model.exceptions;
+package com.hotelbooking.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonAppend;

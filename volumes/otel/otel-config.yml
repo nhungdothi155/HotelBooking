@@ -10,6 +10,8 @@ processors:
 exporters:
   logging:
     loglevel: debug
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"
   jaeger:
     endpoint: jaeger-service:14250
     tls:
@@ -20,4 +22,7 @@ service:
     traces:
       receivers: [ otlp ]
       processors: [ batch ]
-      exporters: [ logging, jaeger ]
+      exporters: [ logging,jaeger ]
+    logs:
+      receivers: [ otlp ]
+      exporters: [ loki ]

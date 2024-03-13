@@ -1,15 +1,12 @@
-package com.hotelbooking.helper;
+package com.hotelbooking.utils;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.hotelbooking.enums.ResponseCodeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.catalina.connector.Response;
-import org.springframework.http.HttpStatus;
 
 @Data
 @Builder

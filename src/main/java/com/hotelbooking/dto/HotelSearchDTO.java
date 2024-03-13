@@ -1,18 +1,18 @@
-package com.hotelbooking.controller.dto;
+package com.hotelbooking.dto;
 
-import joptsimple.internal.Strings;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class HotelSearchDTO {
     //field base on hotel entity
     private String name ;

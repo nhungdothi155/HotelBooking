@@ -1,5 +1,6 @@
-package com.hotelbooking.service;
+package com.hotelbooking.service.impl;
 
+import com.hotelbooking.service.HotelBookingIndexService;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
