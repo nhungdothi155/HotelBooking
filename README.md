@@ -52,6 +52,9 @@ Create a new Hotel Booking integration for a new API partner who serves 3 millio
   docker-compose up
   ~~~
 
+## API 
+- access to swagger link to see all the active API : http://localhost:8080/v1/swagger-ui-custom.html
+  ![image](https://github.com/nhungdothi155/HotelBooking/assets/77849669/d979dee0-8d91-40ae-90c0-962b91c97d7b)
 
 ## Metrics, Logging, Tracing, Monitoring (Grafana, Loki, Promotheses,Jaeger )
 * **Grafana** : access to that port then login by default password username ( admin, admin )
